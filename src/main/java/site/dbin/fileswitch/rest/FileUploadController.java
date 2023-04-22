@@ -1,10 +1,7 @@
 package site.dbin.fileswitch.rest;
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import site.dbin.fileswitch.config.UploadConfig;
 import site.dbin.fileswitch.service.FileUploadService;
 import site.dbin.fileswitch.vo.FileDto;
@@ -18,7 +15,7 @@ import java.io.IOException;
 @RequestMapping("/api/upload")
 public class FileUploadController {
     private final FileUploadService fileUploadService;
-    @PostMapping("/")
+    @PostMapping
     public Result upload(FileDto fileDto) throws IOException {
         fileUploadService.saveFile(
                 fileDto.getFile().getInputStream(),
@@ -26,7 +23,7 @@ public class FileUploadController {
                 fileDto.getIndex()
         );
         fileUploadService.check(fileDto.getFilename());
-        return null;
+        return Result.ok();
     }
 
     @GetMapping("/getTrunk")
@@ -36,15 +33,28 @@ public class FileUploadController {
     }
 
     @GetMapping("/getTask")
-    public Result getTask(Long size,String filename){
+    public Result getTask(@RequestParam Long size, @RequestParam String filename){
         FileInfo fileInfo = fileUploadService.getTask(filename,size);
         if(fileInfo==null){
-            return Result.error("文件名重复了");
+            return Result.error("文件名重复了或者文件太大了");
         }
         else{
             return Result.ok()
                     .add("fileInfo",fileInfo);
         }
-
     }
+
+    @GetMapping("/getFileInfo")
+    public Result getFileInfo(@RequestParam String filename){
+        FileInfo fileInfo =fileUploadService.getTask(filename);
+        if(fileInfo.getFilename()==null){
+            return Result.ok()
+                    .add("status",0);
+        }else{
+            return Result.ok()
+                    .add("status",1)
+                    .add("fileInfo",fileInfo);
+        }
+    }
+
 }

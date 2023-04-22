@@ -18,5 +18,7 @@ public interface FileUploadService {
 
     Long getTrunk();
 
-    FileInfo getTask(String filename, Long allPage);
+    FileInfo getTask(String filename, Long size);
+
+    FileInfo getTask(String filename);
 }

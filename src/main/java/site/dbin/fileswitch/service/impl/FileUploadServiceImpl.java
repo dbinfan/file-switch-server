@@ -3,6 +3,7 @@ package site.dbin.fileswitch.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.dbin.fileswitch.config.UploadConfig;
+import site.dbin.fileswitch.exception.BadRequestException;
 import site.dbin.fileswitch.service.FileUploadService;
 import site.dbin.fileswitch.vo.FileInfo;
 
@@ -71,19 +72,32 @@ public class FileUploadServiceImpl  implements FileUploadService {
     }
 
     @Override
-    public FileInfo getTask(String filename, Long allPage) {
+    public FileInfo getTask(String filename, Long size) {
         if(map.containsKey(filename))
             return map.get(filename);
         if(new File(uploadConfig.getPath()+filename).exists())
             return null;
-        else{
-            FileInfo fileInfo = new FileInfo();
-            fileInfo.setFilename(filename);
-            fileInfo.setAllPage(allPage);
-            fileInfo.setPageSet(Collections.synchronizedSet(new HashSet<>()));
-            map.put(filename,fileInfo);
-            return fileInfo;
+        if(size>uploadConfig.getMaxFileSize()*1024*1024)
+            throw new BadRequestException("文件过大");
+        long allPage = size/uploadConfig.getTrunk();
+        if(size%uploadConfig.getTrunk()!=0)
+            allPage++;
+        FileInfo fileInfo = new FileInfo();
+        fileInfo.setFilename(filename);
+        fileInfo.setAllPage(allPage);
+        fileInfo.setPageSet(Collections.synchronizedSet(new HashSet<>()));
+        map.put(filename,fileInfo);
+        return fileInfo;
+
+    }
+
+    @Override
+    public FileInfo getTask(String filename) {
+        FileInfo fileInfo =  map.get(filename);
+        if(fileInfo==null&&new File(uploadConfig.getPath()+filename).exists()){
+            return new FileInfo();
         }
+        return fileInfo;
     }
 
     private void close(InputStream inputStream){
