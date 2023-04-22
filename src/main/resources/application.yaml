@@ -1,0 +1,24 @@
+server:
+  port: 8899
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1GB
+      max-request-size: 1048MB
+      location: 'D:/temp'
+site.dbin.fileswitch:
+    # ???????
+    path: D:/test/test/test/test
+    # ?????????MB ???tomcat???
+    trunk: 5
+    # ???????
+    typeList: [ jpg,png,gif,jpeg,doc,docx,xls,xlsx,ppt,pptx,pdf,txt,zip,rar ]
+    # ?????????KB
+    bufferSize: 100
+    # ??????
+    maxConnection: 10
+    # ??????MB
+    maxFileSize: 100
+    strategy: 'yyyy-MM-dd'
+    static-path: 'D:/temp/'
