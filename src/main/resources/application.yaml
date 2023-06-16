@@ -6,19 +6,21 @@ spring:
       enabled: true
       max-file-size: 1GB
       max-request-size: 1048MB
+      # 文件缓存位置
       location: 'D:/temp'
 site.dbin.fileswitch:
-    # ???????
+    # 文件储存位置
     path: D:/temp2/temp/
-    # ?????????MB ???tomcat???
+    # 文件分片MB ???tomcat???
     trunk: 5
-    # ???????
+    # 文件类型
     typeList: [ jpg,png,gif,jpeg,doc,docx,xls,xlsx,ppt,pptx,pdf,txt,zip,rar ]
-    # ?????????KB
+    # 缓存大小KB
     bufferSize: 100
-    # ??????
+    # 最大连接数
     maxConnection: 10
-    # ??????MB
+    # 最大文件大小MB
     maxFileSize: 100
     strategy: 'yyyy-MM-dd'
+    # 静态文件路径
     static-path: 'D:/temp2/'
