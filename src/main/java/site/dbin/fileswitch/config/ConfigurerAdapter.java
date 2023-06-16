@@ -47,7 +47,9 @@ public class ConfigurerAdapter implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 前端路径
-        registry.addResourceHandler("/front/**").addResourceLocations("file:"+uploadConfig.getStaticPath()).setCachePeriod(360000);
+        //registry.addResourceHandler("/static/**").addResourceLocations("file:"+uploadConfig.getStaticPath()+"dist/").setCachePeriod(360000);
+        // 将/** 访问映射到 file:/home/riverchiefs/fileswitch/upload/
+        registry.addResourceHandler("/**").addResourceLocations("file:"+uploadConfig.getStaticPath()+"dist/").setCachePeriod(360000);
     }
 
     /**

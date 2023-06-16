@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @SpringBootApplication
 @RestController
@@ -16,9 +17,9 @@ public class Run {
         SpringApplication.run(Run.class, args);
     }
     @GetMapping
-    public void Index(HttpServletResponse response){
+    public void Index(HttpServletResponse response) throws IOException {
         // respose 重定向
-        response.setHeader("Location", "/front/index.html");
+        response.sendRedirect("/index.html");
 
     }
 }

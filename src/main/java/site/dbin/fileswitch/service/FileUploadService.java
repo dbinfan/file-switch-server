@@ -1,8 +1,11 @@
 package site.dbin.fileswitch.service;
 
+import site.dbin.fileswitch.vo.DownloadFile;
 import site.dbin.fileswitch.vo.FileInfo;
 
+import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 public interface FileUploadService {
     /**
@@ -14,11 +17,19 @@ public interface FileUploadService {
      */
     int saveFile(InputStream is, String fileName, long index);
 
-    void check(String filePath);
+    // 检查文件是否已经上传完毕
+    boolean check(String filePath);
 
     Long getTrunk();
 
     FileInfo getTask(String filename, Long size);
 
     FileInfo getTask(String filename);
+
+    List<DownloadFile> getFileList();
+
+    File download(String filename);
+
+    void delete(String filename);
+
 }

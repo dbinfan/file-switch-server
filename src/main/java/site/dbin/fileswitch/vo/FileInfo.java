@@ -8,4 +8,5 @@ public class FileInfo {
     String filename;
     Long allPage;
     Set<Long> pageSet;
+    Long time;
 }

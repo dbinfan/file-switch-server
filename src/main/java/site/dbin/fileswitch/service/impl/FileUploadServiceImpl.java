@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import site.dbin.fileswitch.config.UploadConfig;
 import site.dbin.fileswitch.exception.BadRequestException;
 import site.dbin.fileswitch.service.FileUploadService;
+import site.dbin.fileswitch.vo.DownloadFile;
 import site.dbin.fileswitch.vo.FileInfo;
 
 import java.io.File;
@@ -18,7 +19,23 @@ import java.util.*;
 public class FileUploadServiceImpl  implements FileUploadService {
     private final UploadConfig uploadConfig;
     public static final Map<String, FileInfo> map = Collections.synchronizedMap(new HashMap<>());
+    private void clear(){
+        List<String> list = new LinkedList<>();
+        Long time = System.currentTimeMillis();
+        for(String s:map.keySet()){
+            FileInfo fileInfo = map.get(s);
+            if(time > fileInfo.getTime()+36000){
+                list.add(s);
+            }
+        }
+        for(String s: list){
+            map.remove(s);
+        }
+    }
     public int saveFile(InputStream is, String fileName, long index) {
+        if(map.size()>20){
+            clear();
+        }
         FileInfo fileInfo = map.get(fileName);
         if(fileInfo==null)
             return 3;
@@ -54,14 +71,17 @@ public class FileUploadServiceImpl  implements FileUploadService {
         }
     }
 
+
     @Override
-    public void check(String fileName) {
+    public boolean check(String fileName) {
         FileInfo fileInfo = map.get(fileName);
         if(fileInfo!=null){
             if(fileInfo.getPageSet().size()==fileInfo.getAllPage()){
                 map.remove(fileName);
+                return true;
             }
         }
+        return false;
     }
 
 
@@ -86,6 +106,7 @@ public class FileUploadServiceImpl  implements FileUploadService {
         fileInfo.setFilename(filename);
         fileInfo.setAllPage(allPage);
         fileInfo.setPageSet(Collections.synchronizedSet(new HashSet<>()));
+        fileInfo.setTime(System.currentTimeMillis()/1000);
         map.put(filename,fileInfo);
         return fileInfo;
 
@@ -98,6 +119,38 @@ public class FileUploadServiceImpl  implements FileUploadService {
             return new FileInfo();
         }
         return fileInfo;
+    }
+
+    @Override
+    public List<DownloadFile> getFileList() {
+        // 获取文件列表
+        List<DownloadFile> list = new ArrayList<>();
+        File file = new File(uploadConfig.getPath());
+        File[] files = file.listFiles();
+        if(files!=null){
+            for(File f:files){
+                DownloadFile downloadFile = new DownloadFile();
+                downloadFile.setFilename(f.getName());
+                downloadFile.setSize(f.length()/1024);
+                list.add(downloadFile);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public File download(String filename) {
+        return new File(uploadConfig.getPath()+filename);
+    }
+
+    @Override
+    public void delete(String filename) {
+        // 删除文件
+        File file = new File(uploadConfig.getPath()+filename);
+        if(file.exists()){
+            file.delete();
+        }
+        else throw new BadRequestException("文件不存在");
     }
 
     private void close(InputStream inputStream){

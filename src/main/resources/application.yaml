@@ -9,7 +9,7 @@ spring:
       location: 'D:/temp'
 site.dbin.fileswitch:
     # ???????
-    path: D:/temp2
+    path: D:/temp2/temp/
     # ?????????MB ???tomcat???
     trunk: 5
     # ???????
@@ -21,4 +21,4 @@ site.dbin.fileswitch:
     # ??????MB
     maxFileSize: 100
     strategy: 'yyyy-MM-dd'
-    static-path: 'D:/temp/'
+    static-path: 'D:/temp2/'

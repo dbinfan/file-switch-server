@@ -2,7 +2,6 @@ package site.dbin.fileswitch.rest;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import site.dbin.fileswitch.config.UploadConfig;
 import site.dbin.fileswitch.service.FileUploadService;
 import site.dbin.fileswitch.vo.FileDto;
 import site.dbin.fileswitch.vo.FileInfo;
@@ -15,6 +14,7 @@ import java.io.IOException;
 @RequestMapping("/api/upload")
 public class FileUploadController {
     private final FileUploadService fileUploadService;
+    // 上传文件
     @PostMapping
     public Result upload(FileDto fileDto) throws IOException {
         fileUploadService.saveFile(
@@ -22,8 +22,9 @@ public class FileUploadController {
                 fileDto.getFilename(),
                 fileDto.getIndex()
         );
-        fileUploadService.check(fileDto.getFilename());
-        return Result.ok();
+        boolean is = fileUploadService.check(fileDto.getFilename());
+        return Result.ok()
+                .add("over",is);
     }
 
     @GetMapping("/getTrunk")
@@ -33,6 +34,7 @@ public class FileUploadController {
     }
 
     @GetMapping("/getTask")
+    // 获取上传任务
     public Result getTask(@RequestParam Long size, @RequestParam String filename){
         FileInfo fileInfo = fileUploadService.getTask(filename,size);
         if(fileInfo==null){
@@ -44,6 +46,7 @@ public class FileUploadController {
         }
     }
 
+    //
     @GetMapping("/getFileInfo")
     public Result getFileInfo(@RequestParam String filename){
         FileInfo fileInfo =fileUploadService.getTask(filename);
