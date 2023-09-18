@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 @RestController
@@ -33,12 +35,11 @@ public class FileController {
             out = response.getOutputStream();
             inputStream = Files.newInputStream(file.toPath());
             int fSize = Integer.parseInt(String.valueOf(file.length()));
-            response.setCharacterEncoding("utf-8");
-            response.setContentType("application/x-download");
             response.setHeader("Accept-Ranges", "bytes");
             response.setHeader("Content-Length", String.valueOf(fSize));
-            response.setHeader("Content-Type", "text/plain");
-            response.setHeader("Content-Disposition", "attachment;fileName=" + filename);
+            response.setHeader("content-type", "application/octet-stream;charset=utf-8");
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(file.getName(), "UTF-8"));
             long pos = 0;
             if (null != request.getHeader("Range")) {
                 // 断点续传
@@ -57,6 +58,7 @@ public class FileController {
             while ((length = inputStream.read(buffer, 0, buffer.length)) != -1) {
                 out.write(buffer, 0, length);
             }
+            inputStream.close();
         } catch (Exception e) {
 
         } finally {

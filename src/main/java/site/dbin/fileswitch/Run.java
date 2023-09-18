@@ -11,8 +11,15 @@ import java.io.IOException;
 
 @SpringBootApplication
 @RestController
+@RequestMapping("/")
 public class Run {
     public static void main(String[] args) {
         SpringApplication.run(Run.class, args);
+    }
+    @GetMapping
+    public void Index(HttpServletResponse response) throws IOException {
+        // respose 重定向
+        response.sendRedirect("/index.html");
+
     }
 }
