@@ -1,8 +1,10 @@
 package site.dbin.fileswitch.vo;
 
-import com.sun.istack.internal.NotNull;
+
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotNull;
 
 @Data
 public class FileDto {
